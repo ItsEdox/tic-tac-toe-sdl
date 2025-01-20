@@ -24,18 +24,17 @@ static void drawGrid(window* w, int arr[]) {
         SDL_RenderFillRect(w->render, &square);
 	arr[i] = square.x;
 	arr[i + 1] = square.y;
-	i++;
+	i++; 
         square.x = square.x + 200;
     }
     SDL_RenderPresent(w->render);
 }
 
-static void drawCross(window* w) {
+static void drawCross(window* w, int arr[], int v) {
     SDL_SetRenderDrawColor(w->render, 0, 0, 0, 255);
-    SDL_RenderDrawLine(w->render, 100, 100, 250, 250);
-    SDL_RenderDrawLine(w->render, 250, 100, 100, 250);
+    SDL_RenderDrawLine(w->render, arr[v], arr[v + 1], arr[v] + SQUARE_WH, arr[v + 1] + SQUARE_WH);
+    SDL_RenderDrawLine(w->render, arr[v] + SQUARE_WH, arr[v  + 1], arr[v], arr[v + 1] + SQUARE_WH);
     SDL_RenderPresent(w->render);
-    SDL_Delay(1000 / FPS);
 }
 
 static void drawCircle(window* w, int radius) {
@@ -72,9 +71,10 @@ static void drawCircle(window* w, int radius) {
 static int check_for_rect_click(int arr[], int mx, int my) {
     printf("mx:%d, my:%d\n", mx, my);
     for (int i = 0; i < 18; i++) {
-      if (arr[i] >= mx && arr[i] <= (arr[i] + SQUARE_WH)) {
-	if (arr[i + 1] >= my && arr[i + 1] <= (arr[i + 1] + SQUARE_WH)) { // Something wrong with this!
-	   i++;
+      if (arr[i] <= mx && mx <= (arr[i] + SQUARE_WH)) {
+	if (arr[i + 1] <= my && my <= (arr[i + 1] + SQUARE_WH)) { // Something wrong with this!
+	   printf("%d\n", i);
+	   printf("%d\n", arr[i + 1]);
 	   return i;
 	}
 	else {
@@ -90,16 +90,16 @@ static int check_for_rect_click(int arr[], int mx, int my) {
 
 static void initRender(window* w) {
     w->render = SDL_CreateRenderer(w->win, -1, 0);
+    SDL_RenderSetVSync(w->render, 1);
 }
 
 void setup(window* w) {
     bool programRunning = true;
     initRender(w);
     SDL_Point mouse;
-    int mx, my, board[18];
+    int mx, my, board[18], i;
     while (programRunning) {
         drawGrid(w, board);
-	drawCircle(w, RADIUS);
         while (SDL_PollEvent(w->event)) {
 	  switch (w->event->type) {
 	     case SDL_QUIT:
@@ -107,10 +107,13 @@ void setup(window* w) {
 	        break;
 	     case SDL_MOUSEBUTTONDOWN:
 	        SDL_GetMouseState(&mx, &my);
-		int i = check_for_rect_click(board, mx, my);
+		break;
+	     case SDL_MOUSEBUTTONUP:
+	        i = check_for_rect_click(board, mx, my);
 		if (i != 0) {
-		   drawCross(w);
+		   drawCross(w, board, i);
 		}
+		break;
 	     default:
 	        break;
 	  }
@@ -120,7 +123,7 @@ void setup(window* w) {
 }
 int main(void) {
     window* w;
-    if ((SDL_INIT_EVERYTHING) == -1) {
+    if ((SDL_INIT_VIDEO) == -1) {
         printf("Failed to start SDL. Error Code %s", SDL_GetError());
         return EXIT_FAILURE;
     }
@@ -128,7 +131,6 @@ int main(void) {
     atexit(SDL_Quit);
 
     w->win = SDL_CreateWindow(WINDOW_TITLE, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
-
     setup(w);
     SDL_DestroyWindow(w->win);
     SDL_DestroyRenderer(w->render);
