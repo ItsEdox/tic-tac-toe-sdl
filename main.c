@@ -1,15 +1,15 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include "main.h"
+#include "minimax.h"
+
 #include <SDL2/SDL_assert.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_timer.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <math.h>
-
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL.h>
-#include "main.h"
 
 static void drawGrid(window* w, int arr[]) {
     SDL_Rect square;
@@ -37,10 +37,10 @@ static void drawCross(window* w, int arr[], int v) {
     SDL_RenderPresent(w->render);
 }
 
-static void drawCircle(window* w, int radius) {
+static void drawCircle(window* w, int board[], int cord, int radius) {
     SDL_SetRenderDrawColor(w->render, 0, 0, 0, 255);
-    int centreX = 300 + (SQUARE_WH / 2);
-    int centreY = 100 + (SQUARE_WH / 2);
+    int centreX = board[cord] + (SQUARE_WH / 2);
+    int centreY = board[cord + 1] + (SQUARE_WH / 2);
     // Using Midpoint Circle Algorithm here
     int d = radius << 1; // Bitshifts radius left once so it doubles the radius, which equals d
     int x = radius - 1, y = 0, dx = 0, dy = 0;
@@ -91,6 +91,7 @@ static int check_for_rect_click(int arr[], int mx, int my) {
 static void initRender(window* w) {
     w->render = SDL_CreateRenderer(w->win, -1, 0);
     SDL_RenderSetVSync(w->render, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); 
 }
 
 void setup(window* w) {
@@ -98,8 +99,17 @@ void setup(window* w) {
     initRender(w);
     SDL_Point mouse;
     int mx, my, board[18], i;
+    computerMove(gameBoard);
     while (programRunning) {
         drawGrid(w, board);
+	for (int g = 0; g < 9; g++) {
+	   if (gameBoard[g] == 'X') {
+	      drawCross(w, board, g*2);  
+	   }
+	   if (gameBoard[g] == 'O') {
+	      drawCircle(w, board, g*2, RADIUS);
+	   }
+	}
         while (SDL_PollEvent(w->event)) {
 	  switch (w->event->type) {
 	     case SDL_QUIT:
@@ -111,7 +121,13 @@ void setup(window* w) {
 	     case SDL_MOUSEBUTTONUP:
 	        i = check_for_rect_click(board, mx, my);
 		if (i != 0) {
-		   drawCross(w, board, i);
+		  if (playerMove(gameBoard, i/2) == 1) {
+		    //debug, change later!
+		    printf("Invaild Move. Turn Skipped!");
+		  }
+		  else {
+		    gameBoard[computerMove(gameBoard)] = 'O';
+		  }
 		}
 		break;
 	     default:
