@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "main.h"
-#include "minimax.h"
+#include "game/minimax.h"
 
 #include <SDL2/SDL_assert.h>
 #include <SDL2/SDL_rect.h>
