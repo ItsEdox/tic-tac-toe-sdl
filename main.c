@@ -69,13 +69,15 @@ static void drawCircle(window* w, int board[], int cord, int radius) {
 }
 
 static int check_for_rect_click(int arr[], int mx, int my) {
-    printf("mx:%d, my:%d\n", mx, my);
     for (int i = 0; i < 18; i++) {
       if (arr[i] <= mx && mx <= (arr[i] + SQUARE_WH)) {
-	if (arr[i + 1] <= my && my <= (arr[i + 1] + SQUARE_WH)) { // Something wrong with this!
+	if (arr[i + 1] <= my && my <= (arr[i + 1] + SQUARE_WH)) {
+	  /* Debug Code
+
 	   printf("%d\n", i);
 	   printf("%d\n", arr[i]);
 	   printf("%d\n", arr[i + 1]);
+	  */
 	   return i;
 	}
 	else {
@@ -100,12 +102,20 @@ void setup(window* w) {
     initRender(w);
     SDL_Point mouse;
     int mx, my, board[18], i;
-    // gameBoard[computerMove(gameBoard)] = 'O';
     while (programRunning) {
         drawGrid(w, board);
 	if (playersMove == false) {
 	  gameBoard[computerMove(gameBoard)] = 'O';
-	  playersMove = true;
+	  // printf("%d\n", checkForWin(gameBoard, 'O'));
+	  if (checkForWin(gameBoard, 'O') == 1) {
+	     printf("O Wins!");
+	     programRunning = false;
+	  }
+	  if (countArray(gameBoard) == 9) {
+	     printf("Tie!");
+	     programRunning = false;
+	   }
+	   playersMove = true;
 	}
 	for (int g = 0; g < 9; g++) {
 	  if (gameBoard[g] == 'X') {
@@ -128,9 +138,13 @@ void setup(window* w) {
 		if (i != -1) {
 		  if (playerMove(gameBoard, i/2) == 1) {
 		    //debug, change later!
-		    printf("Invaild Move. Turn Skipped!");
+		    printf("Invaild Move!");
 		  }
 		  else {
+		    if (checkForWin(gameBoard, 'X') == 1) {
+		      printf("X Wins!");
+		      programRunning = false;
+		    }
 		    playersMove = false;
 		  }
 		}

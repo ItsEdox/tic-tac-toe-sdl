@@ -18,9 +18,9 @@ int playerMove(char arr[], int move) {
 int countArray(char arr[]) {
     int j = 0;
     for (int i = 0; i < 9; i++) {
-        if (arr[i] != ' ') {
-            j++;
-        }
+      if (arr[i] != ' ') {
+	  j++;
+      }
     }
     return j;
 }
@@ -40,9 +40,6 @@ int checkForWin(char arr[], char player) {
         (arr[2] == player && arr[5] == player && arr[8] == player) ||
         (arr[0] == player && arr[4] == player && arr[8] == player) ||
         (arr[2] == player && arr[4] == player && arr[6] == player)) {
-            return 2;
-        } 
-    else if (countArray(arr) == 0) {
         return 1;
     }
     else {
