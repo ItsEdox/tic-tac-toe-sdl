@@ -64,7 +64,7 @@ int minimax(int depth, char arr[], bool isMax) {
     }
 
     if (isMax) {
-        int best_score = (int) -INFINITY;
+        int best_score = -10000;
         for (int i = 0; i < 9; i++) {
             if (arr[i] == ' ') {
                 arr[i] = 'O';
@@ -76,7 +76,7 @@ int minimax(int depth, char arr[], bool isMax) {
         return best_score;
     }
     else {
-        int best_score = (int) INFINITY;
+        int best_score = 10000;
         for (int i = 0; i < 9; i++) {
             if (arr[i] == ' ') {
                 arr[i] = 'X';
@@ -90,7 +90,7 @@ int minimax(int depth, char arr[], bool isMax) {
 }
 
 int computerMove(char arr[]) {
-    int best_score = (int) -INFINITY;
+    int best_score = -10000;
     int best_move;
     int score;
     for (int i = 0; i < 9; i++) {

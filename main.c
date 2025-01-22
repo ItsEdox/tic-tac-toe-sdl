@@ -74,6 +74,7 @@ static int check_for_rect_click(int arr[], int mx, int my) {
       if (arr[i] <= mx && mx <= (arr[i] + SQUARE_WH)) {
 	if (arr[i + 1] <= my && my <= (arr[i + 1] + SQUARE_WH)) { // Something wrong with this!
 	   printf("%d\n", i);
+	   printf("%d\n", arr[i]);
 	   printf("%d\n", arr[i + 1]);
 	   return i;
 	}
@@ -85,7 +86,7 @@ static int check_for_rect_click(int arr[], int mx, int my) {
 	 i++;
       }
     }
-    return 0;
+    return -1;
 }
 
 static void initRender(window* w) {
@@ -95,20 +96,24 @@ static void initRender(window* w) {
 }
 
 void setup(window* w) {
-    bool programRunning = true;
+    bool programRunning = true, playersMove = false;
     initRender(w);
     SDL_Point mouse;
     int mx, my, board[18], i;
-    computerMove(gameBoard);
+    // gameBoard[computerMove(gameBoard)] = 'O';
     while (programRunning) {
         drawGrid(w, board);
+	if (playersMove == false) {
+	  gameBoard[computerMove(gameBoard)] = 'O';
+	  playersMove = true;
+	}
 	for (int g = 0; g < 9; g++) {
-	   if (gameBoard[g] == 'X') {
-	      drawCross(w, board, g*2);  
-	   }
-	   if (gameBoard[g] == 'O') {
-	      drawCircle(w, board, g*2, RADIUS);
-	   }
+	  if (gameBoard[g] == 'X') {
+	     drawCross(w, board, g*2);  
+	  }
+	  if (gameBoard[g] == 'O') {
+	     drawCircle(w, board, g*2, RADIUS);
+	  }
 	}
         while (SDL_PollEvent(w->event)) {
 	  switch (w->event->type) {
@@ -120,20 +125,19 @@ void setup(window* w) {
 		break;
 	     case SDL_MOUSEBUTTONUP:
 	        i = check_for_rect_click(board, mx, my);
-		if (i != 0) {
+		if (i != -1) {
 		  if (playerMove(gameBoard, i/2) == 1) {
 		    //debug, change later!
 		    printf("Invaild Move. Turn Skipped!");
 		  }
 		  else {
-		    gameBoard[computerMove(gameBoard)] = 'O';
+		    playersMove = false;
 		  }
 		}
 		break;
 	     default:
 	        break;
 	  }
-	  SDL_SetRenderDrawColor(w->render, 0, 0, 0, 255);
 	}
     }
 }

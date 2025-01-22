@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_rect.h>
 
-#define WINDOW_TITLE "SDL Window"
+#define WINDOW_TITLE "Tic-Tac-Toe"
 #define WINDOW_WIDTH 750
 #define WINDOW_HEIGHT 750
 #define SQUARE_WH 150
