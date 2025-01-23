@@ -50,13 +50,13 @@ int checkForWin(char arr[], char player) {
 int minimax(int depth, char arr[], bool isMax) {
     int score;
     
-    if (checkForWin(arr, 'X') == 2) {
+    if (checkForWin(arr, 'X') == 1) {
         return -1;
     }
-    if (checkForWin(arr, 'O') == 2) {
+    if (checkForWin(arr, 'O') == 1) {
         return 1;
     }
-    if (checkForWin(arr, 'O') == 1) {
+    if (countArray(arr) == 0) {
         return 0;
     }
 
