@@ -27,14 +27,12 @@ static void drawGrid(window* w, int arr[]) {
 	i++; 
         square.x = square.x + 200;
     }
-    SDL_RenderPresent(w->render);
 }
 
 static void drawCross(window* w, int arr[], int v) {
     SDL_SetRenderDrawColor(w->render, 0, 0, 0, 255);
     SDL_RenderDrawLine(w->render, arr[v], arr[v + 1], arr[v] + SQUARE_WH, arr[v + 1] + SQUARE_WH);
     SDL_RenderDrawLine(w->render, arr[v] + SQUARE_WH, arr[v  + 1], arr[v], arr[v + 1] + SQUARE_WH);
-    SDL_RenderPresent(w->render);
 }
 
 static void drawCircle(window* w, int board[], int cord, int radius) {
@@ -65,7 +63,6 @@ static void drawCircle(window* w, int board[], int cord, int radius) {
 	  error = error + dx - d; 
        }
     }
-    SDL_RenderPresent(w->render);
 }
 
 static int check_for_rect_click(int arr[], int mx, int my) {
@@ -106,7 +103,7 @@ void setup(window* w) {
         drawGrid(w, board);
 	if (playersMove == false) {
 	  gameBoard[computerMove(gameBoard)] = 'O';
-	  // printf("%d\n", checkForWin(gameBoard, 'O'));
+	  // Debug: printf("%d\n", checkForWin(gameBoard, 'O'));
 	  if (checkForWin(gameBoard, 'O') == 1) {
 	     printf("O Wins!");
 	     programRunning = false;
@@ -125,6 +122,7 @@ void setup(window* w) {
 	     drawCircle(w, board, g*2, RADIUS);
 	  }
 	}
+	SDL_RenderPresent(w->render);
         while (SDL_PollEvent(w->event)) {
 	  switch (w->event->type) {
 	     case SDL_QUIT:
